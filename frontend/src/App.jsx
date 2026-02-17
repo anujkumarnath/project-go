@@ -3,6 +3,8 @@ import { ConfigProvider } from 'antd';
 import LoginPage from './features/auth/LoginPage';
 import RegisterPage from './features/auth/RegisterPage';
 import UsersPage from './features/users/UsersPage';
+import UserDetailPage from './features/users/UserDetailPage';
+import EditUserPage from './features/users/EditUserPage';
 // TODO: Re-enable once auth is implemented in the backend
 // import ProtectedRoute from './components/ProtectedRoute';
 import AppLayout from './components/AppLayout';
@@ -32,6 +34,8 @@ export default function App() {
           > */}
           <Route element={<AppLayout />}>
             <Route path="/users" element={<UsersPage />} />
+            <Route path="/users/:email" element={<UserDetailPage />} />
+            <Route path="/users/:email/edit" element={<EditUserPage />} />
           </Route>
 
           <Route path="*" element={<Navigate to="/users" replace />} />

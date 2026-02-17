@@ -19,11 +19,23 @@ export const usersApi = createApi({
       query: () => '/users',
       providesTags: ['Users'],
     }),
+    getUser: builder.query({
+      query: (email) => `/users/${encodeURIComponent(email)}`,
+      providesTags: (_result, _error, email) => [{ type: 'Users', id: email }],
+    }),
     addUser: builder.mutation({
       query: (user) => ({
         url: '/users',
         method: 'POST',
         body: user,
+      }),
+      invalidatesTags: ['Users'],
+    }),
+    updateUser: builder.mutation({
+      query: ({ email, newEmail, ...updates }) => ({
+        url: `/users/${encodeURIComponent(email)}`,
+        method: 'PUT',
+        body: { ...updates, ...(newEmail !== undefined && { email: newEmail }) },
       }),
       invalidatesTags: ['Users'],
     }),
@@ -37,4 +49,10 @@ export const usersApi = createApi({
   }),
 });
 
-export const { useGetUsersQuery, useAddUserMutation, useDeleteUserMutation } = usersApi;
+export const {
+  useGetUsersQuery,
+  useGetUserQuery,
+  useAddUserMutation,
+  useUpdateUserMutation,
+  useDeleteUserMutation,
+} = usersApi;
