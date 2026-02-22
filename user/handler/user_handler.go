@@ -20,6 +20,15 @@ func NewUserHandler(userRepo *repository.UserRepository) *UserHandler {
 	}
 }
 
+func (h *UserHandler) GetUsers (c *gin.Context) {
+	users, err := h.userRepo.GetUsers()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, users)
+}
+
 func (h *UserHandler) GetUserByEmail (c *gin.Context) {
 	email := c.Param("email")
 	user, err := h.userRepo.GetUserByEmail(email)
