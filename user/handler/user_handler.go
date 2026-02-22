@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"log"
 	"net/http"
 
 	"user/repository"
@@ -28,7 +27,6 @@ func (h *UserHandler) GetUserByEmail (c *gin.Context) {
 		c.JSON(http.StatusNotFound, gin.H{"error": "user not found"})
 		return
 	}
-	log.Printf("User: %v", user)
 	c.JSON(http.StatusOK, user)
 }
 
@@ -52,7 +50,9 @@ func (h *UserHandler) CreateUser (c *gin.Context) {
 
 func (h *UserHandler) UpdateUser (c *gin.Context) {
 	email := c.Param("email")
-	var update models.User
+	/* LEARN: difference with var update models.User */
+	var update bson.M
+
 	if err := c.ShouldBindJSON(&update); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -65,7 +65,7 @@ func (h *UserHandler) UpdateUser (c *gin.Context) {
 		return
 	}
 
-	if result.MatchedCount < 1 {
+	if result.MatchedCount == 0 {
 		c.JSON(http.StatusNotFound, gin.H{"error": "user not found"})
 		return
 	}
@@ -81,7 +81,7 @@ func (h *UserHandler) DeleteUser (c *gin.Context) {
 		return
 	}
 
-	if result.DeletedCount < 1 {
+	if result.DeletedCount == 0 {
 		c.JSON(http.StatusNotFound, gin.H{"error": "user not found"})
 		return
 	}

@@ -12,6 +12,8 @@ import (
 	"user/route"
 	"user/repository"
 	"user/handler"
+
+	"github.com/gin-gonic/gin"
 )
 
 func main() {
@@ -22,7 +24,9 @@ func main() {
 	userCollection := config.GetCollection(mongoClient, "project_go", "users")
 	userRepo       := repository.NewUserRepository(userCollection) 
 	userHandler    := handler.NewUserHandler(userRepo)
-	router         := route.SetRouteHandlers(userHandler)
+
+	router := gin.Default()
+	route.Setup(router, userHandler)
 
 	server := &http.Server{
 		Addr:              ":8080",

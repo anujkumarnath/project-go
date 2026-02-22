@@ -2,6 +2,7 @@ package repository
 
 import (
 	"log"
+	"time"
 	"context"
 
 	"user/models"
@@ -20,11 +21,15 @@ func NewUserRepository(userCollection *mongo.Collection) *UserRepository {
 	}
 }
 
+/* LEARN: should I return pointer? Won't it cause dangling pointer issue after function exits? */ 
 func (r *UserRepository) GetUserByEmail(email string) (*models.User, error) {
-	filter := bson.D{{Key: "email", Value: email}} 
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+	/* LEARN: difference with bson.D */
+	filter := bson.M{"email": email} 
 
 	var user models.User
-	err := r.userCollection.FindOne(context.Background(), filter).Decode(&user)
+	err := r.userCollection.FindOne(ctx, filter).Decode(&user)
 
 	if err != nil {
 		log.Println("no user found")
@@ -34,19 +39,29 @@ func (r *UserRepository) GetUserByEmail(email string) (*models.User, error) {
 	return &user, nil
 } 
 
+/* LEARN: why to user pointer and why to use struct directly? */
 func (r *UserRepository) CreateUser(user *models.User) (*mongo.InsertOneResult, error) {
-	result, err := r.userCollection.InsertOne(context.Background(), user)
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	result, err := r.userCollection.InsertOne(ctx, user)
 	return result, err
 }
 
-func (r *UserRepository) Update(email string, updateData interface{}) (*mongo.UpdateResult, error) {
+func (r *UserRepository) Update(email string, updateData bson.M) (*mongo.UpdateResult, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
 	filter := bson.D{{"email", email}}
 	update := bson.D{{"$set", updateData}}
-	result, err := r.userCollection.UpdateOne(context.Background(), filter, update)
+	result, err := r.userCollection.UpdateOne(ctx, filter, update)
 	return result, err;
 }
 
 func (r *UserRepository) Delete(email string) (*mongo.DeleteResult, error) {
-	result, err := r.userCollection.DeleteOne(context.Background(), bson.D{{"email", email}})
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	result, err := r.userCollection.DeleteOne(ctx, bson.D{{"email", email}})
 	return result, err
 }

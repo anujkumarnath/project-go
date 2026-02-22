@@ -6,8 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func SetRouteHandlers(userHandlers *handler.UserHandler) *gin.Engine {
-	router := gin.Default()
+func Setup(router *gin.Engine, userHandlers *handler.UserHandler) {
 	{
 		user := router.Group("/users")
 
@@ -16,6 +15,4 @@ func SetRouteHandlers(userHandlers *handler.UserHandler) *gin.Engine {
 		user.PUT("/:email",    userHandlers.UpdateUser)
 		user.DELETE("/:email", userHandlers.DeleteUser)
 	}
-
-	return router
 }

@@ -11,13 +11,13 @@ import (
 
 const mongoDbUri = "mongodb://rgs:rgsdev@windows.mshome.net:27017/?authSource=admin&directConnection=true"
 
-func ConnectDB() (*mongo.Client) {
+func ConnectDB() *mongo.Client {
 	clientOptions := options.Client().ApplyURI(mongoDbUri)
 
 	client, err := mongo.Connect(clientOptions)
 
 	if err != nil {
-		log.Fatal("Failed to connect to mongodb")
+		log.Fatal("Failed to connect to mongodb", err)
 		return nil
 	}
 
@@ -27,7 +27,7 @@ func ConnectDB() (*mongo.Client) {
 	if err = client.Ping(context, nil); err != nil {
 		log.Fatal("Failed to ping mongodb")
 	}
-	log.Println("MongoDb ping successful")
+	log.Println("Connected to MongoDB!")
 
 	return client
 }
