@@ -12,6 +12,7 @@ func SetRouteHandlers(userHandlers *handler.UserHandler) *gin.Engine {
 		user := router.Group("/users")
 
 		user.GET("/:email", userHandlers.GetUserByEmail)
+		user.POST("/",      userHandlers.CreateUser)
 	}
 
 	return router

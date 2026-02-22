@@ -33,3 +33,8 @@ func (r *UserRepository) GetUserByEmail(email string) (*models.User, error) {
 
 	return &user, nil
 } 
+
+func (r *UserRepository) CreateUser(user *models.User) (*mongo.InsertOneResult, error) {
+	result, err := r.userCollection.InsertOne(context.Background(), user)
+	return result, err
+}
