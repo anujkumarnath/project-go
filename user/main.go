@@ -49,7 +49,12 @@ func main() {
 	if err := server.Shutdown(shutdownCtx); err != nil {
 		log.Fatal("Server forced to shutdown: ", err)
 	}
+	log.Println("Server stopped accepting requests")
 
-	log.Println("Server exiting")
+	if err := mongoClient.Disconnect(shutdownCtx); err != nil {
+		log.Fatalf("Failed to disconnect MongoDB: %v", err)
+	}
+	log.Println("MongoDB connection closed")
 
+	log.Println("Shutdown complete")
 }
