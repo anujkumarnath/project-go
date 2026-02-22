@@ -50,6 +50,29 @@ func (h *UserHandler) CreateUser (c *gin.Context) {
 	c.JSON(http.StatusCreated, user)
 }
 
+func (h *UserHandler) UpdateUser (c *gin.Context) {
+	email := c.Param("email")
+	var update models.User
+	if err := c.ShouldBindJSON(&update); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	result, err := h.userRepo.Update(email, update)
+
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	if result.MatchedCount < 1 {
+		c.JSON(http.StatusNotFound, gin.H{"error": "user not found"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "user updated"})
+}
+
 func (h *UserHandler) DeleteUser (c *gin.Context) {
 	email := c.Param("email")
 	result, err := h.userRepo.Delete(email)
