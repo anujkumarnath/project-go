@@ -49,3 +49,19 @@ func (h *UserHandler) CreateUser (c *gin.Context) {
 	user.ID = result.InsertedID.(bson.ObjectID)
 	c.JSON(http.StatusCreated, user)
 }
+
+func (h *UserHandler) DeleteUser (c *gin.Context) {
+	email := c.Param("email")
+	result, err := h.userRepo.Delete(email)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	if result.DeletedCount < 1 {
+		c.JSON(http.StatusNotFound, gin.H{"error": "user not found"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "user deleted"})
+}

@@ -38,3 +38,8 @@ func (r *UserRepository) CreateUser(user *models.User) (*mongo.InsertOneResult, 
 	result, err := r.userCollection.InsertOne(context.Background(), user)
 	return result, err
 }
+
+func (r *UserRepository) Delete(email string) (*mongo.DeleteResult, error) {
+	result, err := r.userCollection.DeleteOne(context.Background(), bson.D{{"email", email}})
+	return result, err
+}
