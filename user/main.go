@@ -8,20 +8,21 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/gin-gonic/gin"
+	"user/config"
+	"user/route"
+	"user/repository"
+	"user/handler"
 )
 
 func main() {
-	router := gin.Default()
-	router.GET("/ping", func(c *gin.Context) {
-		time.Sleep(5 * time.Second)
-		c.JSON(http.StatusOK, gin.H{
-			"message": "pong",
-		})
-	})
-
 	ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
 	defer stop()
+
+	mongoClient    := config.ConnectDB()
+	userCollection := config.GetCollection(mongoClient, "project_go", "users")
+	userRepo       := repository.NewUserRepository(userCollection) 
+	userHandler    := handler.NewUserHandler(userRepo)
+	router         := route.SetRouteHandlers(userHandler)
 
 	server := &http.Server{
 		Addr:              ":8080",
