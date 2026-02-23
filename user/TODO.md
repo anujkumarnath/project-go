@@ -3,3 +3,4 @@
 - Resovle all 'LEARN' comments 
 - Fix naming of variables and functions
 - Fix repo structures
+- Use env variables instead of hardcoded values
